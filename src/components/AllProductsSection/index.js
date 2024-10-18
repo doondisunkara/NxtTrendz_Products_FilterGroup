@@ -73,6 +73,9 @@ const apiStatusConstants = {
 
 class AllProductsSection extends Component {
   state = {
+    category: '',
+    rating: '',
+    searchInput: '',
     productsList: [],
     apiStatus: apiStatusConstants.loading,
     activeOptionId: sortbyOptions[0].optionId,
@@ -88,10 +91,8 @@ class AllProductsSection extends Component {
     })
     const jwtToken = Cookies.get('jwt_token')
 
-    // TODO: Update the code to get products with filters applied
-
-    const {activeOptionId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}`
+    const {activeOptionId, category, rating, searchInput} = this.state
+    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${category}&title_search=${searchInput}&rating=${rating}`
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -122,6 +123,35 @@ class AllProductsSection extends Component {
     this.setState({activeOptionId}, this.getProducts)
   }
 
+  updateSearchInput = (searchInput, isEnterClicked) => {
+    if (isEnterClicked) {
+      this.getProducts()
+    } else {
+      this.setState({searchInput})
+    }
+  }
+
+  updateCategory = category => {
+    this.setState({category, rating: ''}, this.getProducts)
+  }
+
+  updateRating = rating => {
+    console.log(rating)
+    this.setState({rating}, this.getProducts)
+  }
+
+  clearFilters = () => {
+    this.setState(
+      {
+        searchInput: '',
+        category: '',
+        rating: '',
+        activeOptionId: sortbyOptions[0].optionId,
+      },
+      this.getProducts,
+    )
+  }
+
   renderProductsView = () => {
     const {apiStatus} = this.state
     switch (apiStatus) {
@@ -137,7 +167,22 @@ class AllProductsSection extends Component {
   renderProductsList = () => {
     const {productsList, activeOptionId} = this.state
 
-    // TODO: Add No Products View
+    if (productsList.length === 0) {
+      return (
+        <div className="no-products-container">
+          <img
+            className="no-products-img"
+            src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png"
+            alt="no products"
+          />
+          <h1 className="no-products-heading">No Products Found</h1>
+          <p className="no-products-description">
+            We could not find any products. Try other filters.
+          </p>
+        </div>
+      )
+    }
+
     return (
       <div className="all-products-container">
         <ProductsHeader
@@ -175,11 +220,20 @@ class AllProductsSection extends Component {
   )
 
   render() {
-    const {apiStatus} = this.state
-
+    const {searchInput, category, rating} = this.state
     return (
       <div className="all-products-section">
-        <FiltersGroup categoryOptions={categoryOptions} />
+        <FiltersGroup
+          searchInput={searchInput}
+          activeCategoryId={category}
+          activeRatingId={rating}
+          categoryOptions={categoryOptions}
+          ratingsList={ratingsList}
+          updateSearchInput={this.updateSearchInput}
+          updateCategory={this.updateCategory}
+          updateRating={this.updateRating}
+          clearFilters={this.clearFilters}
+        />
 
         {this.renderProductsView()}
       </div>

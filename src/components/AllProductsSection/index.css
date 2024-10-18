@@ -52,10 +52,10 @@
 .products-failed-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   text-align: center;
   margin: auto;
-  margin-top: 48px;
   width: 500px;
 }
 
@@ -71,6 +71,33 @@
 }
 
 .failed-description {
+  color: #594d6d;
+  font-family: 'Roboto';
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.no-products-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: auto;
+  width: 500px;
+}
+
+.no-products-img {
+  width: 350px;
+}
+
+.no-products-heading {
+  color: #171f46;
+  font-family: 'Roboto';
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.no-products-description {
   color: #594d6d;
   font-family: 'Roboto';
   font-size: 19px;
